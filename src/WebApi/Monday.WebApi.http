@@ -1,0 +1,12 @@
+@Monday.WebApi_HostAddress = http://localhost:5080
+
+GET {{Monday.WebApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
+
+POST {{Monday.WebApi_HostAddress}}/books
+
+{
+    "Name": "lorem ipsum"
+}
