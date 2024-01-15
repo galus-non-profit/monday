@@ -24,7 +24,7 @@ public class ExceptionsHandler : IExceptionHandler
         if (exception is ValidationException validationException)
         {
             statusCode = (int)HttpStatusCode.BadRequest;
-            details = string.Join(DEFAULT_SEPARATOR, validationException.failures);
+            details = string.Join(DEFAULT_SEPARATOR, validationException.Failures);
         }
         
         httpContext.Response.StatusCode = statusCode;
