@@ -1,12 +1,19 @@
-using System.Reflection;
+using FluentValidation;
 using Hangfire;
 using MediatR;
+using MessagePack;
 using Microsoft.AspNetCore.Mvc;
+using Monday.WebApi.Behaviors;
 using Monday.WebApi.Commands;
+using Monday.WebApi.Handlers;
+using Monday.WebApi.Interfaces;
+using Monday.WebApi.Services;
 using Monday.WebApi.SignalR.Hubs;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Logging.AddSeq();
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -15,11 +22,37 @@ builder.Services.AddSwaggerGen();
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddHangfire(x => x.UseSqlServerStorage(connectionString));
+
+builder.Services
+    .AddProblemDetails(options =>
+        options.CustomizeProblemDetails = ctx =>
+        {
+            ctx.ProblemDetails.Extensions.Add("request", $"{ctx.HttpContext.Request.Method} {ctx.HttpContext.Request.Path}");
+        });
+
+builder.Services.AddExceptionHandler<ExceptionsHandler>();
+
 builder.Services.AddHangfireServer();
 
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
-builder.Services.AddSignalR();
+builder.Services.AddMediatR(cfg =>
+    {
+        cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
+        cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+        cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(AddBookBehavior<,>));
+    }
+);
 
+builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+
+builder.Services.AddSingleton<IBookRepository, BookRepository>();
+builder.Services.AddSingleton<IBookReadService, BookReadService>();
+
+builder.Services.AddSignalR()
+    .AddMessagePackProtocol(options =>
+    {
+        options.SerializerOptions = MessagePackSerializerOptions.Standard
+            .WithSecurity(MessagePackSecurity.UntrustedData);
+    });
 
 var app = builder.Build();
 
@@ -30,27 +63,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseExceptionHandler();
 app.UseHangfireDashboard();
-
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
 
 app.MapPost("/books", async ([FromServices] ISender mediator, [FromBody] AddBook command, CancellationToken cancellationToken = default) => await mediator.Send(command, cancellationToken))
     .WithName("AddBook")
@@ -59,8 +73,3 @@ app.MapPost("/books", async ([FromServices] ISender mediator, [FromBody] AddBook
 app.MapHub<BookHub>("/bookHub");
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
