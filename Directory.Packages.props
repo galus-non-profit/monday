@@ -4,11 +4,10 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <NoWarn>S1125;</NoWarn>
-  </PropertyGroup>
-
-  <PropertyGroup>
     <DefaultItemExcludes>*.ncrunchproject;*.v3.ncrunchproject.user;</DefaultItemExcludes>
   </PropertyGroup>
+<PropertyGroup>
+    <NoWarn>S1125;</NoWarn>
+</PropertyGroup>
 
 </Project>

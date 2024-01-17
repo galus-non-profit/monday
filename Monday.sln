@@ -7,6 +7,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{585DD77A-5ED
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Monday.WebApi", "src\WebApi\Monday.WebApi.csproj", "{64675AEB-8759-4B17-8953-272C8CBB61A9}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{4DB211BA-792C-42D0-861E-7342509203EC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Monday.WebApi.UnitTests", "tests\WebApi.UnitTests\Monday.WebApi.UnitTests.csproj", "{22C34530-EEA4-4577-9F55-5E7CAE8695FE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,8 +24,13 @@ Global
 		{64675AEB-8759-4B17-8953-272C8CBB61A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{64675AEB-8759-4B17-8953-272C8CBB61A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{64675AEB-8759-4B17-8953-272C8CBB61A9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{22C34530-EEA4-4577-9F55-5E7CAE8695FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22C34530-EEA4-4577-9F55-5E7CAE8695FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22C34530-EEA4-4577-9F55-5E7CAE8695FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22C34530-EEA4-4577-9F55-5E7CAE8695FE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{64675AEB-8759-4B17-8953-272C8CBB61A9} = {585DD77A-5EDE-4FB3-BE85-F096EF9A8429}
+		{22C34530-EEA4-4577-9F55-5E7CAE8695FE} = {4DB211BA-792C-42D0-861E-7342509203EC}
 	EndGlobalSection
 EndGlobal
