@@ -1,8 +1,8 @@
-﻿using FluentValidation;
+﻿namespace Monday.WebApi.Validators;
+
+using FluentValidation;
 using Monday.WebApi.Commands;
 using Monday.WebApi.Interfaces;
-
-namespace Monday.WebApi.Validators;
 
 public sealed class AddBookValidator : AbstractValidator<AddBook>
 {
@@ -12,16 +12,16 @@ public sealed class AddBookValidator : AbstractValidator<AddBook>
     {
         this.readService = readService;
 
-        this.RuleFor(book => book.Name)
+        RuleFor(book => book.Name)
             .NotEmpty()
             .WithMessage("Book name can not be empty");
 
-        this.RuleFor(book => book.ISBN)
+        RuleFor(book => book.ISBN)
             .NotEmpty()
             .WithMessage("Book ISBN can not be empty");
 
-        this.RuleFor(book => book.ISBN)
-            .MustAsync(BeUniqueIsbn)
+        RuleFor(book => book.ISBN)
+            .MustAsync(this.BeUniqueIsbn)
             .WithMessage("Book ISBN must be unique");
     }
 

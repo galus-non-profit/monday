@@ -1,10 +1,10 @@
-﻿using Hangfire;
+﻿namespace Monday.WebApi.CommandHandlers;
+
+using Hangfire;
 using MediatR;
 using Monday.WebApi.Commands;
 using Monday.WebApi.Extensions;
 using Monday.WebApi.Jobs;
-
-namespace Monday.WebApi.CommandHandlers;
 
 public sealed class AddBookHandler : IRequestHandler<AddBook>
 {
@@ -13,8 +13,8 @@ public sealed class AddBookHandler : IRequestHandler<AddBook>
 
     public AddBookHandler(IBackgroundJobClient jobClient, ILogger<AddBookHandler> logger)
     {
-            this.jobClient = jobClient;
-            this.logger = logger;
+        this.jobClient = jobClient;
+        this.logger = logger;
     }
 
     public Task Handle(AddBook request, CancellationToken cancellationToken)

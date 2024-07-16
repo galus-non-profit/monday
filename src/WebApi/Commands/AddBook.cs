@@ -1,9 +1,9 @@
-﻿using MediatR;
+﻿namespace Monday.WebApi.Commands;
 
-namespace Monday.WebApi.Commands;
+using MediatR;
 
 public sealed record class AddBook : IRequest
 {
-     public required string ISBN { get; init; }
-     public required string Name { get; init; }
+    public required string ISBN { get; init; }
+    public required string Name { get; init; }
 }

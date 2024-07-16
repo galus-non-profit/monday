@@ -1,12 +1,11 @@
-﻿using Azure.Core;
+﻿namespace Monday.WebApi.SignalR.EventHandlers;
+
 using MediatR;
 using Microsoft.AspNetCore.SignalR;
 using Monday.WebApi.Events;
 using Monday.WebApi.Extensions;
 using Monday.WebApi.SignalR.Hubs;
 using Monday.WebApi.SignalR.Models;
-
-namespace Monday.WebApi.SignalR.EventHandlers;
 
 internal sealed class BookAddedHandler : INotificationHandler<BookAdded>
 {
@@ -22,7 +21,7 @@ internal sealed class BookAddedHandler : INotificationHandler<BookAdded>
     public async Task Handle(BookAdded notification, CancellationToken cancellationToken)
     {
         using var loggerScope = this.logger.BeginPropertyScope(
-        ("Scope", "Book"),
+            ("Scope", "Book"),
             ("Name", notification.Name)
         );
 
@@ -33,8 +32,8 @@ internal sealed class BookAddedHandler : INotificationHandler<BookAdded>
             Status = "Succeed",
         };
 
-        logger.LogInformation("Publishing book added event on hub: {Status}", status.Status );
-        await hubContext.Clients.All.SendAsync("AddBookStatus", status, cancellationToken);
-        logger.LogInformation("Published book added event on hub: {Status}", status.Status );
+        this.logger.LogInformation("Publishing book added event on hub: {Status}", status.Status);
+        await this.hubContext.Clients.All.SendAsync("AddBookStatus", status, cancellationToken);
+        this.logger.LogInformation("Published book added event on hub: {Status}", status.Status);
     }
 }

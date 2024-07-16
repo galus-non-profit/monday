@@ -1,6 +1,6 @@
-﻿using MediatR;
+﻿namespace Monday.WebApi.Events;
 
-namespace Monday.WebApi.Events;
+using MediatR;
 
 public sealed record class BookAdded : INotification
 {

@@ -1,6 +1,4 @@
-﻿using Monday.WebApi.Domain;
-
-namespace Monday.WebApi.Interfaces;
+﻿namespace Monday.WebApi.Interfaces;
 
 public interface IBookReadService
 {

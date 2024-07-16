@@ -1,10 +1,10 @@
+namespace Monday.WebApi.UnitTests;
+
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Monday.WebApi.Exceptions;
 using Monday.WebApi.Handlers;
 using NSubstitute;
-
-namespace Monday.WebApi.UnitTests;
 
 [TestClass]
 public class UnitTest1
@@ -16,9 +16,9 @@ public class UnitTest1
         var problemDetailsservice = Substitute.For<IProblemDetailsService>();
         var sut = new ExceptionsHandler(problemDetailsservice);
         var httpContext = Substitute.For<HttpContext>();
-        var failures = new List<string>{"failure1"};
+        var failures = new List<string> { "failure1" };
         var exception = new ValidationException("tmp", failures);
-        
+
         // Act
         var result = await sut.TryHandleAsync(httpContext, exception, CancellationToken.None);
 

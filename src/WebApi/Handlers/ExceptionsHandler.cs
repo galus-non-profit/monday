@@ -1,13 +1,13 @@
-﻿using Microsoft.AspNetCore.Diagnostics;
-using Monday.WebApi.Exceptions;
-using System.Net;
+﻿namespace Monday.WebApi.Handlers;
 
-namespace Monday.WebApi.Handlers;
+using System.Net;
+using Microsoft.AspNetCore.Diagnostics;
+using Monday.WebApi.Exceptions;
 
 public class ExceptionsHandler : IExceptionHandler
 {
-    private const string DEFAULT_TITLE = "An error occurred";
     private const string DEFAULT_SEPARATOR = ", ";
+    private const string DEFAULT_TITLE = "An error occurred";
 
     private readonly IProblemDetailsService problemDetailsService;
 
@@ -26,7 +26,7 @@ public class ExceptionsHandler : IExceptionHandler
             statusCode = (int)HttpStatusCode.BadRequest;
             details = string.Join(DEFAULT_SEPARATOR, validationException.Failures);
         }
-        
+
         httpContext.Response.StatusCode = statusCode;
 
         return await this.problemDetailsService.TryWriteAsync(new ProblemDetailsContext

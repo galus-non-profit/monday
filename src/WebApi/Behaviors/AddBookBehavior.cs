@@ -1,35 +1,35 @@
-﻿using MediatR;
+﻿namespace Monday.WebApi.Behaviors;
+
+using MediatR;
 using Monday.WebApi.Events;
 using Monday.WebApi.Interfaces;
 
-namespace Monday.WebApi.Behaviors
+public sealed class AddBookBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse> where TRequest : notnull, IAddBook
 {
-    public sealed class AddBookBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse> where TRequest : notnull, IAddBook
+    private readonly IPublisher mediator;
+
+    public AddBookBehavior(IPublisher mediator)
     {
-        private readonly IPublisher mediator;
+        this.mediator = mediator;
+    }
 
-        public AddBookBehavior(IPublisher mediator)
+    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
+    {
+        try
         {
-            this.mediator = mediator;
+            return await next();
         }
-
-        public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
+        catch
         {
-            try
+            var @event = new BookNotAdded
             {
-                return await next();
-            }
-            catch
-            {
-                var @event = new BookNotAdded
-                {
-                    ISBN = request.ISBN,
-                    Name = request.Name,
-                };
+                ISBN = request.ISBN,
+                Name = request.Name,
+            };
 
-                await mediator.Publish(@event, cancellationToken);
-                throw;
-            }
+            await this.mediator.Publish(@event, cancellationToken);
+
+            throw;
         }
     }
 }

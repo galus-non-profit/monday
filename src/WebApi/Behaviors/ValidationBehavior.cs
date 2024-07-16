@@ -34,7 +34,7 @@ public sealed class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<
         {
             var messages = failures.Select(failure => failure.ErrorMessage);
 
-            throw new Monday.WebApi.Exceptions.ValidationException("book", messages);
+            throw new Monday.WebApi.Exceptions.ValidationException("user", messages);
         }
 
         return await next();

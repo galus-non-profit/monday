@@ -1,15 +1,19 @@
+using System.Reflection;
 using FluentValidation;
 using Hangfire;
 using MediatR;
 using MessagePack;
 using Microsoft.AspNetCore.Mvc;
+using Monday.WebApi.Auth;
 using Monday.WebApi.Behaviors;
 using Monday.WebApi.Commands;
+using Monday.WebApi.Database;
+using Monday.WebApi.Database.Interfaces;
 using Monday.WebApi.Handlers;
 using Monday.WebApi.Interfaces;
+using Monday.WebApi.Options;
 using Monday.WebApi.Services;
 using Monday.WebApi.SignalR.Hubs;
-using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +24,15 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+//builder.Services.AddOptions<SqlOptions>().Configure(options =>
+//{
+//    options.SqlConnectionString = "Server=(local)\\SQLExpress;Database=Potato;Trusted_Connection=True;MultipleActiveResultSets=true;Encrypt=False";
+//});
+
+var options = new SqlOptions() { SqlConnectionString = "Server=(local)\\SQLExpress;Database=Potato;Trusted_Connection=True;MultipleActiveResultSets=true;Encrypt=False" };
+
+builder.Services.AddSingleton(options);
 
 builder.Services.AddHangfire(x => x.UseSqlServerStorage(connectionString));
 
@@ -34,11 +47,16 @@ builder.Services.AddExceptionHandler<ExceptionsHandler>();
 
 builder.Services.AddHangfireServer();
 
+builder.Services.AddTransient<IPasswordHasher, PasswordHasher>();
+builder.Services.AddTransient<IDBEngine,DBEngine>();
+
 builder.Services.AddMediatR(cfg =>
     {
         cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
         cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
         cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(AddBookBehavior<,>));
+        cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(AddUserBehavior<,>));
+        cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(DeleteUserBehavior<,>));
     }
 );
 
@@ -46,6 +64,9 @@ builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
 builder.Services.AddSingleton<IBookRepository, BookRepository>();
 builder.Services.AddSingleton<IBookReadService, BookReadService>();
+
+builder.Services.AddSingleton<IUserRepository, UserRepository>();
+builder.Services.AddSingleton<IUserReadService, UserReadService>();
 
 builder.Services.AddSignalR()
     .AddMessagePackProtocol(options =>
@@ -70,6 +91,16 @@ app.MapPost("/books", async ([FromServices] ISender mediator, [FromBody] AddBook
     .WithName("AddBook")
     .WithOpenApi();
 
+app.MapPost("/users", async ([FromServices] ISender mediator, [FromBody] AddUser command, CancellationToken cancellationToken = default) => await mediator.Send(command, cancellationToken))
+    .WithName("AddUser")
+    .WithOpenApi();
+
+app.MapDelete("/users", async ([FromServices] ISender mediator, [FromBody] DeleteUser command, CancellationToken cancellationToken = default) => await mediator.Send(command, cancellationToken))
+    .WithName("DeleteUser")
+    .WithOpenApi();
+
 app.MapHub<BookHub>("/bookHub");
+app.MapHub<UserHub>("/userHub");
+app.MapHub<NotificationsHub>("/notificationsHub");
 
 app.Run();

@@ -1,9 +1,8 @@
-﻿using Monday.WebApi.Domain;
+﻿namespace Monday.WebApi.Interfaces;
 
-namespace Monday.WebApi.Interfaces
+using Monday.WebApi.Domain;
+
+public interface IBookRepository
 {
-    public interface IBookRepository
-    {
-        Task CreateAsync(BookEntity entity, CancellationToken cancellationToken = default);
-    }
+    Task CreateAsync(BookEntity entity, CancellationToken cancellationToken = default);
 }
