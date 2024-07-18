@@ -1,24 +1,26 @@
-﻿namespace Monday.WebApi.Auth
+﻿namespace Monday.WebApi.Auth;
+
+using System.Security.Cryptography;
+using System.Text;
+
+internal sealed class PasswordHasher : IPasswordHasher
 {
-    using System.Security.Cryptography;
-    using System.Text;
+    private const char DELIMITER = ';';
+    private const int ITERATIONS = 100000;
+    private const int KEY_SIZE = 512 / 8;
+    private const int SALT_SIZE = 256 / 8;
+    private static readonly HashAlgorithmName HASH_ALGORITHM = HashAlgorithmName.SHA512;
 
-    public class PasswordHasher : IPasswordHasher
+    public string Hash(string password)
     {
-        private readonly int saltSize = 256 / 8;
-        private readonly int iterations = 100000;
-        private readonly int keySize = 512 / 8;
-        private readonly HashAlgorithmName hashAlgorithm = HashAlgorithmName.SHA512;
-        private readonly char delimiter = ';';
+        var salt = RandomNumberGenerator.GetBytes(SALT_SIZE);
+        var base64Salt = Convert.ToBase64String(salt);
 
-        public string Hash(string password)
-        {
-            var salt = RandomNumberGenerator.GetBytes(this.saltSize);
+        var bytes = Encoding.UTF8.GetBytes(password);
 
-            var hash = Rfc2898DeriveBytes.Pbkdf2(Encoding.UTF8.GetBytes(password),
-                salt, this.iterations, this.hashAlgorithm, this.keySize);
+        var hash = Rfc2898DeriveBytes.Pbkdf2(bytes, salt, ITERATIONS, HASH_ALGORITHM, KEY_SIZE);
+        var base64Hash = Convert.ToBase64String(hash);
 
-            return string.Join(this.delimiter, Convert.ToBase64String(salt), Convert.ToBase64String(hash));
-        }
+        return string.Join(DELIMITER, base64Salt, base64Hash);
     }
 }

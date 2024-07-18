@@ -32,5 +32,9 @@
     <PackageReference Include="Swagger.Extensions.DependencyInjection" />
     <PackageReference Include="Swashbuckle.AspNetCore" />
   </ItemGroup>
+  
+  <ItemGroup>
+    <Using Include="MediatR" />
+  </ItemGroup>
 
 </Project>

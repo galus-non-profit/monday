@@ -1,7 +1,6 @@
 using System.Reflection;
 using FluentValidation;
 using Hangfire;
-using MediatR;
 using MessagePack;
 using Microsoft.AspNetCore.Mvc;
 using Monday.WebApi.Auth;
@@ -12,6 +11,7 @@ using Monday.WebApi.Database.Interfaces;
 using Monday.WebApi.Handlers;
 using Monday.WebApi.Interfaces;
 using Monday.WebApi.Options;
+using Monday.WebApi.Query;
 using Monday.WebApi.Services;
 using Monday.WebApi.SignalR.Hubs;
 
@@ -48,11 +48,13 @@ builder.Services.AddExceptionHandler<ExceptionsHandler>();
 builder.Services.AddHangfireServer();
 
 builder.Services.AddTransient<IPasswordHasher, PasswordHasher>();
-builder.Services.AddTransient<IDBEngine,DBEngine>();
+builder.Services.AddTransient<IDBEngine, SqlServerEngine>();
+
+var assembly = Assembly.GetExecutingAssembly();
 
 builder.Services.AddMediatR(cfg =>
     {
-        cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
+        cfg.RegisterServicesFromAssembly(assembly);
         cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
         cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(AddBookBehavior<,>));
         cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(AddUserBehavior<,>));
@@ -60,7 +62,7 @@ builder.Services.AddMediatR(cfg =>
     }
 );
 
-builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+builder.Services.AddValidatorsFromAssembly(assembly, includeInternalTypes: true);
 
 builder.Services.AddSingleton<IBookRepository, BookRepository>();
 builder.Services.AddSingleton<IBookReadService, BookReadService>();
@@ -97,6 +99,9 @@ app.MapPost("/users", async ([FromServices] ISender mediator, [FromBody] AddUser
 
 app.MapDelete("/users", async ([FromServices] ISender mediator, [FromBody] DeleteUser command, CancellationToken cancellationToken = default) => await mediator.Send(command, cancellationToken))
     .WithName("DeleteUser")
+    .WithOpenApi();
+
+app.MapGet("/users", async ([FromServices] ISender mediator, CancellationToken cancellationToken = default) => await mediator.Send(new GetUsers(), cancellationToken))
     .WithOpenApi();
 
 app.MapHub<BookHub>("/bookHub");

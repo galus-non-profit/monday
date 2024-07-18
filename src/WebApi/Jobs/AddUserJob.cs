@@ -2,10 +2,9 @@
 
 using System.ComponentModel;
 using Hangfire;
-using MediatR;
 using Monday.WebApi.Commands;
 
-public sealed class AddUserJob
+internal sealed class AddUserJob
 {
     private readonly IMediator mediator;
 
@@ -22,7 +21,7 @@ public sealed class AddUserJob
             Id = id,
             Email = email,
             Name = name,
-            PasswordHashed = passwordHash,
+            Password = passwordHash,
         };
 
         await this.mediator.Send(command, cancellationToken);

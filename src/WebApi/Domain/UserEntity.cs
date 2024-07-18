@@ -2,29 +2,30 @@
 
 using System.Diagnostics.CodeAnalysis;
 using Monday.WebApi.Exceptions;
+using Monday.WebApi.Results;
 
 public sealed record UserEntity
 {
     public required Email Email { get; init; }
     public required UserId Id { get; init; }
     public required string Name { get; init; }
-    public required PasswordHashed PasswordHashed { get; init; }
+    public required Password Password { get; init; }
 
     [SetsRequiredMembers]
-    public UserEntity(string name, Email email, UserId id, PasswordHashed passwordHashed)
+    public UserEntity(string name, Email email, UserId id, Password password)
     {
         this.Name = name;
         this.Email = email;
         this.Id = id;
-        this.PasswordHashed = passwordHashed;
+        this.Password = password;
     }
 }
 
-public sealed record PasswordHashed
+public sealed record Password
 {
     public string Value { get; private init; }
 
-    public PasswordHashed(string value)
+    public Password(string value)
     {
         if (value == string.Empty)
         {
@@ -67,28 +68,18 @@ public sealed record UserId
     }
 }
 
-
 public static class UserEntityExtension
 {
-    public static UserDbEnity ToDbEnity(this UserEntity userEntity)
+    public static UserDBEntity ToDbEntity(this UserEntity userEntity)
     {
-        var result = new UserDbEnity
+        var result = new UserDBEntity
         {
-            UserId = userEntity.Id.Value,
+            Id = userEntity.Id.Value,
             Email = userEntity.Email.Value,
-            PasswordHash = userEntity.PasswordHashed.Value,
-            Name = userEntity.Name,
+            PasswordHash = userEntity.Password.Value,
+            UserName = userEntity.Name,
         };
 
         return result;
     }
-}
-
-
-public sealed record UserDbEnity
-{
-    public string Email { get; init; } = string.Empty;
-    public string Name { get; init; } = string.Empty;
-    public Guid UserId { get; init; } = Guid.Empty;
-    public string PasswordHash { get; init; } = string.Empty;
 }

@@ -1,6 +1,5 @@
 ﻿namespace Monday.WebApi.Behaviors;
 
-using MediatR;
 using Monday.WebApi.Events;
 using Monday.WebApi.Interfaces;
 

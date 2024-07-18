@@ -3,7 +3,7 @@
 using FluentValidation;
 using Monday.WebApi.Commands;
 
-public sealed class DeleteUserValidator : AbstractValidator<AddUser>
+internal sealed class DeleteUserValidator : AbstractValidator<AddUser>
 {
     public DeleteUserValidator()
     {

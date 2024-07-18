@@ -1,6 +1,5 @@
 ﻿namespace Monday.WebApi.CommandHandlers;
 
-using MediatR;
 using Monday.WebApi.Commands;
 using Monday.WebApi.Domain;
 using Monday.WebApi.Events;
@@ -29,21 +28,21 @@ internal sealed class AddUserFromJobHandler : IRequestHandler<AddUserFromJob>
 
         this.logger.LogInformation("Creating user");
 
-        var entity = new UserEntity(
-            request.Name,
-            new Email(request.Email),
-            new UserId(request.Id),
-            new PasswordHashed(request.PasswordHashed));
+        var email = new Email(request.Email);
+        var userId = new UserId(request.Id);
+        var password = new Password(request.Password);
+
+        var entity = new UserEntity(request.Name, email, userId, password);
 
         this.logger.LogInformation("Adding user to repository");
         await this.repository.CreateAsync(entity, cancellationToken);
         this.logger.LogInformation("User has been added to repository");
 
-        var @event = new UserAdded()
+        var @event = new UserAdded
         {
-            Name = entity.Name,
-            Id = entity.Id.Value,
             Email = entity.Email.Value,
+            Id = entity.Id.Value,
+            Name = entity.Name,
         };
 
         this.logger.LogInformation("Publishing information about the creation of the user");

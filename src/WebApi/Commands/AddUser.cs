@@ -1,7 +1,5 @@
 ﻿namespace Monday.WebApi.Commands;
 
-using MediatR;
-
 public sealed record AddUser : IRequest
 {
     public required string Email { get; init; }

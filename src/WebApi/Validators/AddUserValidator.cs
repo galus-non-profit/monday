@@ -4,7 +4,7 @@ using FluentValidation;
 using Monday.WebApi.Commands;
 using Monday.WebApi.Interfaces;
 
-public sealed class AddUserValidator : AbstractValidator<AddUser>
+internal sealed class AddUserValidator : AbstractValidator<AddUser>
 {
     private readonly IUserReadService userReadService;
 
@@ -18,7 +18,7 @@ public sealed class AddUserValidator : AbstractValidator<AddUser>
 
         RuleFor(user => user.Name)
             .NotEmpty()
-            .MustAsync(this.BeUniqueUserId)
+            .MustAsync(this.BeUniqueUserName)
             .WithMessage("User name can not be empty");
 
         RuleFor(user => user.Email)
@@ -27,10 +27,10 @@ public sealed class AddUserValidator : AbstractValidator<AddUser>
 
         RuleFor(user => user.Password)
             .NotEmpty()
-            .WithMessage("User passwordHashed can not be empty");
+            .WithMessage("User password can not be empty");
     }
 
-    private async Task<bool> BeUniqueUserId(string name, CancellationToken cancellationToken = default)
+    private async Task<bool> BeUniqueUserName(string name, CancellationToken cancellationToken = default)
     {
         return await this.userReadService.IsExists(name, cancellationToken);
     }

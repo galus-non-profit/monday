@@ -1,19 +1,18 @@
 ﻿namespace Monday.WebApi.CommandHandlers;
 
 using Hangfire;
-using MediatR;
 using Monday.WebApi.Auth;
 using Monday.WebApi.Commands;
 using Monday.WebApi.Extensions;
 using Monday.WebApi.Jobs;
 
-public sealed class AddUserHandler : IRequestHandler<AddUser>
+internal sealed class AddUserHandler : IRequestHandler<AddUser>
 {
     private readonly IBackgroundJobClient jobClient;
-    private readonly IPasswordHasher passwordHasher;
     private readonly ILogger<AddBookHandler> logger;
+    private readonly IPasswordHasher passwordHasher;
 
-    public AddUserHandler(IBackgroundJobClient jobClient,IPasswordHasher passwordHasher, ILogger<AddBookHandler> logger)
+    public AddUserHandler(IBackgroundJobClient jobClient, IPasswordHasher passwordHasher, ILogger<AddBookHandler> logger)
     {
         this.jobClient = jobClient;
         this.passwordHasher = passwordHasher;
