@@ -20,7 +20,7 @@
     <PackageVersion Include="Hangfire.Core" Version="1.8.14" />
     <PackageVersion Include="Hangfire.SqlServer" Version="1.8.14" />
     <PackageVersion Include="MediatR" Version="12.3.0" />
-    <PackageVersion Include="MessagePack" Version="2.5.171" />
+    <PackageVersion Include="MessagePack" Version="3.1.4" />
     <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="8.0.7" />
     <PackageVersion Include="Microsoft.AspNetCore.SignalR.Common" Version="8.0.7" />
     <PackageVersion Include="Microsoft.AspNetCore.SignalR.Protocols.MessagePack" Version="8.0.7" />

@@ -6,10 +6,3 @@ public sealed class InvalidEntityId : DomainException
     {
     }
 }
-
-public sealed class InvalidPassword : DomainException
-{
-    public InvalidPassword() : base("Invalid password")
-    {
-    }
-}

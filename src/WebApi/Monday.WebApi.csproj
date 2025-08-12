@@ -5,13 +5,18 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <InvariantGlobalization>false</InvariantGlobalization>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
-  
+
   <ItemGroup>
-    <InternalVisibleTo Include="..\test\WebApi.UnitTests" />
+    <Using Include="MediatR" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="WebApi.UnitTests" />
     <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <PackageReference Include="Azure.Core" />
     <PackageReference Include="Dapper" />
@@ -31,10 +36,6 @@
     <PackageReference Include="Seq.Extensions.Logging" />
     <PackageReference Include="Swagger.Extensions.DependencyInjection" />
     <PackageReference Include="Swashbuckle.AspNetCore" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <Using Include="MediatR" />
   </ItemGroup>
 
 </Project>
